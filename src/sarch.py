@@ -1,23 +1,30 @@
 #! /usr/bin/python3
 import sys
+import platform
+
+from common import *
+
+HELP_MESSAGE = """Usage: sarch [OPTION]...
+Print machine architecture.
+
+      --help     display this help and exit"""
 
 
-def usage():
-    print(
-        """Usage: arch
-    Prints operating system architecture"""
-    )
+def main():
+    """
+    The file entry point on runs (not imports).
+    """
+    if 1 == len(sys.argv) or FULL_ARG_PREFIX == sys.argv[1]:
+        # it's important to use `platform.machine()` in order to have better support in different archs
+        write_out(platform.machine())
+    else:
+        if "--help" in sys.argv[1:]:
+            write_out(get_usage_string())
+        else:  # unrecognized option
+            handle_error_args()
+            return 1
+    return 0
 
 
 if __name__ == "__main__":
-    if "--help" in sys.argv:
-        usage()
-    elif len(sys.argv) > 1:
-        sys.stderr.out("Too many arguments")
-        sys.stderr.write("Usage: sarch")
-    else:
-        # Determine system architecture using the max integer size
-        if sys.maxsize > 2 ** 32:
-            sys.stdout.write("x86_64\n")
-        else:
-            sys.stdout.write("x86\n")
+    exit(main())
